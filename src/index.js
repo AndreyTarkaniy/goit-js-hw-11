@@ -1,6 +1,7 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import NewsApiService from './js/news-service.js';
+import { createMarkupFoto } from './js/createMarkupFoto.js';
 
 const newsApiService = new NewsApiService();
 
@@ -19,7 +20,7 @@ function handleSearchFotoSubmit(e) {
   e.preventDefault();
 
   clearFotosSearch();
-  newsApiService.query = e.target.elements.searchQuery.value;
+  newsApiService.query = e.target.elements.searchQuery.value.trim();
   newsApiService.resetPage();
   newsApiService.fetchArticles().then(appendFotosMarkup);
 }
@@ -29,39 +30,7 @@ function handleLoadMoreFotoClick() {
 }
 
 function appendFotosMarkup(hits) {
-  const elementFoto = hits
-    .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) =>
-        `<div class="gallery__item ">
-        <a class= "gallery__link" href="${largeImageURL}"><img class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
-
-             <div class="info">
-              <p class="info-item">
-                <b>Likes ${likes}</b>
-              </p>
-              <p class="info-item">
-                <b>Views ${views}</b>
-              </p>
-              <p class="info-item">
-                <b>Comments ${comments}</b>
-              </p>
-              <p class="info-item">
-                <b>Downloads ${downloads}</b>
-              </p>
-            </div>
-          </div>`
-    )
-    .join('');
-
-  refs.fotoCard.insertAdjacentHTML('beforeend', elementFoto);
+  refs.fotoCard.insertAdjacentHTML('beforeend', createMarkupFoto(hits));
 }
 
 function clearFotosSearch() {
