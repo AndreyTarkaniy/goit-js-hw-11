@@ -1,8 +1,7 @@
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
 import NewsApiService from './js/news-service.js';
 import { createMarkupPhoto } from './js/createMarkupPhoto.js';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { lightbox } from './js/simplelightbox.js';
 
 const newsApiService = new NewsApiService();
 
@@ -15,7 +14,7 @@ const refs = {
 };
 
 refs.form.addEventListener('submit', handleSearchPhotoSubmit);
-refs.loadMoreBtn.addEventListener('click', getArticles);
+refs.loadMoreBtn.addEventListener('click', getPhotosGroup);
 
 refs.loadMoreBtn.hidden = true;
 
@@ -24,45 +23,22 @@ function handleSearchPhotoSubmit(e) {
 
   clearPhotosSearch();
   newsApiService.query = e.target.elements.searchQuery.value.trim();
-  // console.log(newsApiService);
 
   if (newsApiService.query === '') {
     return Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
-  getArticles();
+  getPhotosGroup();
 
   newsApiService.resetPage();
   refs.loadMoreBtn.hidden = false;
-
-  // newsApiService.fetchArticles().then(hits => {
-  //   appendPhotosMarkup(hits);
-  // });
 }
 
-// function handleLoadMorePhotoClick() {
-//   newsApiService.fetchArticles().then(imag => {
-//     appendPhotosMarkup(imag);
-//     refs.loadMoreBtn.hidden = false;
-//   });
-// }
-
-async function getArticles() {
+async function getPhotosGroup() {
   try {
     const { hits, totalHits } = await newsApiService.fetchArticles();
     appendPhotosMarkup(hits);
-
-    // if (!hits.length) {
-    //   refs.loadMoreBtn.hidden = true;
-    //   clearPhotosSearch();
-    //   Notify.failure(
-    //     'Sorry, there are no images matching your search query. Please try again.'
-    //   );
-    // } else if (refs.photoCard.children.length >= totalHits) {
-    //   refs.loadMoreBtn.hidden = true;
-    //   Notify.info("Were sorry, but you've reached the end of search results.");
-    // }
 
     if (!hits.length) {
       refs.loadMoreBtn.hidden = true;
@@ -75,10 +51,12 @@ async function getArticles() {
       Notify.info("We're sorry, but you've reached the end of search results.");
     } else {
       setTimeout(() => {
-        const imagesLeft = totalHits - refs.photoCard.children.length;
+        const imagesLeft = totalHits;
         Notify.success(`Hooray! We found ${imagesLeft} images.`);
       }, 800);
     }
+
+    lightbox.refresh();
   } catch (error) {
     console.log(error);
   }
@@ -91,7 +69,3 @@ function appendPhotosMarkup(imag) {
 function clearPhotosSearch() {
   refs.photoCard.innerHTML = '';
 }
-// new SimpleLightbox.refresh('.gallery a', {
-//   captionsData: 'alt',
-//   captionDelay: 250,
-// });

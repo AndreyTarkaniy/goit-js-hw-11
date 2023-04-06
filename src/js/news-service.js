@@ -1,5 +1,4 @@
 import axios from 'axios';
-// axios.defaults.baseURL = 'https://pixabay.com/api/';
 
 export default class NewsApiService {
   BASE_URL = 'https://pixabay.com/api';
@@ -17,7 +16,7 @@ export default class NewsApiService {
       image_type: 'photo',
       orientation: 'horizontal',
       safesearch: 'true',
-      per_page: 10,
+      per_page: 40,
       page: this.page,
     });
 
@@ -25,17 +24,6 @@ export default class NewsApiService {
     this.incrementPage();
     return data;
   }
-
-  //   fetchArticles() {
-  //     return fetch(
-  //       `${this.BASE_URL}/?key=${this.API_KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=5&page=${this.page}`
-  //     )
-  //       .then(response => response.json())
-  //       .then(({ hits }) => {
-  //         this.incrementPage();
-  //         return hits;
-  //       });
-  //   }
 
   incrementPage() {
     this.page += 1;
