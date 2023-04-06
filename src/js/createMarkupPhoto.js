@@ -1,5 +1,5 @@
-export const createMarkupFoto = hits => {
-  return hits
+export const createMarkupPhoto = imag => {
+  return imag
     .map(
       ({
         webformatURL,
