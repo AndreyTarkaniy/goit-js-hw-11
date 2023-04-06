@@ -4,19 +4,24 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 const refs = {
   form: document.querySelector('.search-form'),
   input: document.querySelector('input'),
-  button: document.querySelector('button'),
+  searchBtn: document.querySelector('.search'),
   fotoCard: document.querySelector('.gallery'),
+  loadMoreBtn: document.querySelector('.load-more'),
 };
 
-refs.form.addEventListener('submit', handleFotoSubmit);
+refs.form.addEventListener('submit', handleSearchFotoSubmit);
+refs.loadMoreBtn.addEventListener('click', handleLoadMoreFotoClick);
 
-function handleFotoSubmit(e) {
+let searhcQuery = '';
+
+function handleSearchFotoSubmit(e) {
   e.preventDefault();
 
-  const query = refs.input.value;
+  // const searhcQuery = e.target.elements.query.value;
+  searhcQuery = refs.input.value;
 
   fetch(
-    `https://pixabay.com/api/?key=34996310-6eb230e6525d45c07c1c5f00a&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=1`
+    `https://pixabay.com/api/?key=34996310-6eb230e6525d45c07c1c5f00a&q=${searhcQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=1`
   )
     .then(response => response.json())
     .then(data => renderList(data.hits));
@@ -57,4 +62,12 @@ function renderList(galleryItems) {
 
   refs.fotoCard.insertAdjacentHTML('beforeend', elementFoto);
 }
-const gallery = new SimpleLightbox('.gallery a');
+
+function handleLoadMoreFotoClick() {
+  fetch(
+    `https://pixabay.com/api/?key=34996310-6eb230e6525d45c07c1c5f00a&q=${searhcQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=1`
+  )
+    .then(response => response.json())
+    .then(data => renderList(data.hits));
+}
+// const gallery = new SimpleLightbox('.gallery a');
